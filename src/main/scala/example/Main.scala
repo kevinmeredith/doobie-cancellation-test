@@ -20,7 +20,7 @@ object Main extends IOApp {
       Blocker.liftExecutionContext(ExecutionContexts.synchronous)
     )
 
-    val query: ConnectionIO[Unit] = sleep100Seconds.unique
+    val query: ConnectionIO[Unit] = sleep10Seconds.unique
 
     val postgresSleep100Secons: IO[Unit] =
       query
@@ -44,7 +44,7 @@ object Main extends IOApp {
   private val sleep1Second: IO[Unit] =
     IO.sleep(1.second)
 
-  private val sleep100Seconds: Query0[Unit] =
+  private val sleep10Seconds: Query0[Unit] =
     sql"""SELECT pg_sleep(10)""".query[Unit]
 
 }
