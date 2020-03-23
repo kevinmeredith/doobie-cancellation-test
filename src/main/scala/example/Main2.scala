@@ -24,8 +24,9 @@ object Main2 extends IOApp {
     for {
       _ <- runWithTimings(
         sleep10SecondsWith5SecStatementTimeout
-          .to[List]
+          .unique
           .transact(xa)
+          .attempt
           .void
       )
     } yield ExitCode.Success
@@ -33,9 +34,9 @@ object Main2 extends IOApp {
 
   private def runWithTimings[A](action: IO[A]): IO[A] =
     for {
-      _ <- IO(println("begin: " + java.time.Instant.now))
+      _ <- IO(println("start:" + java.time.Instant.now))
       a <- action
-      _ <- IO(println("end: " + java.time.Instant.now))
+      _ <- IO(println("end  :" + java.time.Instant.now))
     } yield a
 
   // See https://dba.stackexchange.com/a/164450/11153
