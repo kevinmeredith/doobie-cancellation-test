@@ -21,10 +21,12 @@ object Main2 extends IOApp {
       Blocker.liftExecutionContext(ExecutionContexts.synchronous)
     )
 
+    val combined: ConnectionIO[Unit] =
+      setTimeout.option >> sleep10SecondsWith5SecStatementTimeout.unique
+
     for {
       _ <- runWithTimings(
-        sleep10SecondsWith5SecStatementTimeout
-          .unique
+        combined
           .transact(xa)
           .attempt
           .void
@@ -39,9 +41,10 @@ object Main2 extends IOApp {
       _ <- IO(println("end  :" + java.time.Instant.now))
     } yield a
 
+  private val setTimeout: Query0[Unit] =
+    sql"""set statement_timeout = 5000""".query[Unit]
+
   // See https://dba.stackexchange.com/a/164450/11153
   private val sleep10SecondsWith5SecStatementTimeout: Query0[Unit] =
-    sql"""set statement_timeout = 5000; -- 5 seconds
-          select pg_sleep(10);
-          """.query[Unit]
+    sql"""select pg_sleep(10);""".query[Unit]
 }
