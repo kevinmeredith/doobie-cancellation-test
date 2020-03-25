@@ -22,7 +22,7 @@ object Main2 extends IOApp {
     )
 
     val combined: ConnectionIO[Unit] =
-      setTimeout.option >> sleep10SecondsWith5SecStatementTimeout.unique
+      setTimeout.run >> sleep10SecondsWith5SecStatementTimeout.unique
 
     for {
       _ <- runWithTimings(
@@ -41,8 +41,8 @@ object Main2 extends IOApp {
       _ <- IO(println("end  :" + java.time.Instant.now))
     } yield a
 
-  private val setTimeout: Query0[Unit] =
-    sql"""set statement_timeout = 5000""".query[Unit]
+  private val setTimeout: Update0 =
+    sql"""set statement_timeout = 5000""".update
 
   // See https://dba.stackexchange.com/a/164450/11153
   private val sleep10SecondsWith5SecStatementTimeout: Query0[Unit] =
